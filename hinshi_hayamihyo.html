@@ -51,6 +51,15 @@ body {
 .word-chip { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .word-chip .w-text { font-size: 20px; font-weight: bold; padding: 8px 14px; border-radius: 8px; color: #0d1117; white-space: nowrap; }
 .word-chip .w-pos  { font-size: 11px; padding: 2px 9px; border-radius: 10px; color: #fff; font-weight: bold; letter-spacing: 0.5px; white-space: nowrap; }
+.word-chip-clickable { cursor: pointer; transition: transform 0.15s; }
+.word-chip-clickable:hover { transform: translateY(-3px); }
+.word-chip-clickable:hover .w-text { box-shadow: 0 0 0 2px #fff; }
+.pos-more { margin-top: 4px; font-size: 12px; color: var(--text2); font-weight: normal; }
+.pos-table tr.row-flash { animation: rowFlash 1.6s ease; }
+@keyframes rowFlash {
+  0%   { background: rgba(245,197,24,0.35); }
+  100% { background: transparent; }
+}
 .sentence-note { text-align: center; font-size: 12px; color: var(--text2); margin-top: 16px; }
 
 .pos-table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
@@ -66,15 +75,49 @@ body {
 
 .flow-recap { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 22px; text-align: center; margin-top: 8px; }
 
+.hint-box { background: rgba(163,113,247,0.06); border: 1px dashed var(--purple); border-radius: 8px; padding: 12px 16px; margin: 8px 0 12px; font-size: 13px; color: var(--text2); line-height: 2.0; display: none; }
+.hint-btn { background: transparent; border: 1px dashed var(--purple); color: var(--purple); padding: 5px 14px; border-radius: 8px; font-size: 12px; font-family: inherit; cursor: pointer; margin-bottom: 8px; transition: all 0.2s; }
+.hint-btn:hover { background: rgba(163,113,247,0.1); }
+
+@keyframes shake { 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+/* ====== 品詞パズル ====== */
+.puzzle-intro { font-size: 13px; color: var(--text2); line-height: 1.9; margin-bottom: 16px; }
+.puzzle-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 18px 16px; margin-bottom: 14px; transition: border-color 0.2s; }
+.puzzle-card.puzzle-solved { border-color: var(--green); }
+.puzzle-card.puzzle-shake { animation: shake 0.4s; }
+.puzzle-num { font-size: 11px; color: var(--text2); margin-bottom: 10px; letter-spacing: 0.5px; }
+.puzzle-slots { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; min-height: 44px; }
+.puzzle-slot { min-width: 56px; height: 40px; border: 1.5px dashed var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #0d1117; padding: 0 10px; }
+.puzzle-slot.filled { border-style: solid; color: #0d1117; font-weight: bold; }
+.puzzle-pool { display: flex; flex-wrap: wrap; gap: 8px; }
+.puzzle-chunk-btn { border: none; border-radius: 8px; padding: 8px 16px; font-size: 15px; font-family: inherit; font-weight: bold; color: #0d1117; cursor: pointer; transition: transform 0.15s; }
+.puzzle-chunk-btn:hover { transform: translateY(-2px); }
+.puzzle-result { margin-top: 10px; font-size: 13px; min-height: 18px; }
+.puzzle-result.puzzle-correct { color: var(--green); font-weight: bold; }
+.puzzle-result.puzzle-wrong { color: var(--red); }
+
+/* ====== 絶対にありえない組み合わせ ====== */
+.imp-wrap { margin-bottom: 20px; }
+.imp-wrap-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--red); letter-spacing: 1.5px; margin-bottom: 12px; }
+.imp-card { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid var(--red); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+.imp-head { font-size: 15px; font-weight: bold; color: var(--text); margin-bottom: 10px; letter-spacing: 0.3px; }
+.imp-visual { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.imp-chip { display: inline-block; padding: 6px 14px; border-radius: 8px; font-size: 14px; font-weight: bold; color: #0d1117; white-space: nowrap; }
+.imp-chip-plain { background: var(--bg3) !important; color: var(--text2) !important; border: 1px dashed var(--text2); font-weight: normal; }
+.imp-x { font-size: 20px; font-weight: bold; color: var(--red); flex-shrink: 0; }
+.imp-note { font-size: 12px; color: var(--text2); border-top: 1px solid var(--border); padding-top: 8px; }
+.imp-exception { display: inline-block; margin-top: 8px; font-size: 11px; color: var(--green); font-weight: bold; background: rgba(63,185,80,0.1); padding: 3px 10px; border-radius: 6px; }
+
 .print-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--purple), #7c3aed); color: #fff; border: none; padding: 12px 22px; border-radius: 10px; font-size: 14px; font-family: inherit; font-weight: bold; cursor: pointer; letter-spacing: 0.5px; }
 .print-btn:hover { opacity: 0.88; }
 .ref-actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 28px 0; align-items: center; }
 
 @media print {
   body { background: #fff !important; color: #111 !important; }
-  .top-nav, .print-btn, .ref-actions { display: none !important; }
+  .top-nav, .print-btn, .ref-actions, .hint-btn { display: none !important; }
   .ref-intro { background: #f3f3f3 !important; color: #333 !important; border-color: #ccc !important; }
-  .sentence-board, .pos-table-wrap, .pos-table, .flow-recap { background: #fff !important; border-color: #999 !important; }
+  .sentence-board, .pos-table-wrap, .pos-table, .flow-recap, .puzzle-card, .imp-card { background: #fff !important; border-color: #999 !important; }
   .pos-table th { background: #eee !important; color: #333 !important; }
   .pos-table td { color: #111 !important; border-color: #ccc !important; }
   .word-chip .w-text { color: #111 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -112,17 +155,192 @@ var SENTENCE = [
 ];
 
 var POS_ROWS = [
-  { pos:'動詞',   word:'歩か（歩く）', kind:'自立語', katsuyo:'する',   tip:'言い切りがウ段（歩く）。単独で述語になれる' },
-  { pos:'形容詞', word:'大きい',       kind:'自立語', katsuyo:'する',   tip:'言い切りが「い」' },
-  { pos:'形容動詞', word:'静かだ',     kind:'自立語', katsuyo:'する',   tip:'言い切りが「だ」。「〜な」の形で体言を修飾できる', groupEnd:true },
-  { pos:'名詞',   word:'犬',           kind:'自立語', katsuyo:'しない', tip:'主語になれる（「犬が」の形にできる）', groupEnd:true },
-  { pos:'副詞',   word:'とても・全然', kind:'自立語', katsuyo:'しない', tip:'主に用言（動詞・形容詞・形容動詞）を修飾する' },
-  { pos:'連体詞', word:'あの',         kind:'自立語', katsuyo:'しない', tip:'体言だけを修飾する' },
-  { pos:'接続詞', word:'しかし',       kind:'自立語', katsuyo:'しない', tip:'文と文、語と語をつなぐ' },
-  { pos:'感動詞', word:'ああ',         kind:'自立語', katsuyo:'しない', tip:'それだけで独立語になる（感動・呼びかけ・応答）', groupEnd:true },
-  { pos:'助動詞', word:'ない',         kind:'付属語', katsuyo:'する',   tip:'動詞「歩か」にくっついて意味を添える' },
-  { pos:'助詞',   word:'は',           kind:'付属語', katsuyo:'しない', tip:'体言「犬」にくっついて関係を示す' },
+  { pos:'動詞',   word:'歩か（歩く）', kind:'自立語', katsuyo:'する',   tip:'言い切りがウ段（歩く）。単独で述語になれる',
+    more:['読む','書く','見る','食べる','走る','来る','する'] },
+  { pos:'形容詞', word:'大きい',       kind:'自立語', katsuyo:'する',   tip:'言い切りが「い」',
+    more:['高い','美しい','楽しい','寒い','優しい','小さい'] },
+  { pos:'形容動詞', word:'静かだ',     kind:'自立語', katsuyo:'する',   tip:'言い切りが「だ」。「〜な」の形で体言を修飾できる', groupEnd:true,
+    more:['きれいだ','元気だ','立派だ','簡単だ','便利だ','好きだ'] },
+  { pos:'名詞',   word:'犬',           kind:'自立語', katsuyo:'しない', tip:'主語になれる（「犬が」の形にできる）', groupEnd:true,
+    more:['学校','本','水','友達','時間','山田さん'] },
+  { pos:'副詞',   word:'とても・全然', kind:'自立語', katsuyo:'しない', tip:'主に用言（動詞・形容詞・形容動詞）を修飾する',
+    more:['すぐに','かなり','ゆっくり','きっと','たぶん','もっと','ちょっと'] },
+  { pos:'連体詞', word:'あの',         kind:'自立語', katsuyo:'しない', tip:'体言だけを修飾する',
+    more:['この','その','どの','あらゆる','いわゆる','大きな','小さな','とんだ'] },
+  { pos:'接続詞', word:'しかし',       kind:'自立語', katsuyo:'しない', tip:'文と文、語と語をつなぐ',
+    more:['そして','だから','けれども','つまり','また','または','なぜなら'] },
+  { pos:'感動詞', word:'ああ',         kind:'自立語', katsuyo:'しない', tip:'それだけで独立語になる（感動・呼びかけ・応答）', groupEnd:true,
+    more:['あっ','まあ','やれやれ','おい','こら','もしもし','ねえ','はい'] },
+  { pos:'助動詞', word:'ない',         kind:'付属語', katsuyo:'する',   tip:'動詞「歩か」にくっついて意味を添える',
+    more:['れる・られる','せる・させる','た','そうだ','らしい','ようだ','ます'] },
+  { pos:'助詞',   word:'は',           kind:'付属語', katsuyo:'しない', tip:'体言「犬」にくっついて関係を示す',
+    more:['が','を','に','と','から','ので','か','ね','よ'] },
 ];
+
+function posId(pos) { return 'posrow-' + pos; }
+
+var IMPOSSIBLE_RULES = [
+  { head:'付属語は文の先頭に来ない', left:{label:'助詞・助動詞', pos:'助詞'}, right:{label:'文の先頭'}, note:'くっつく相手が必ず前にいる言葉だから' },
+  { head:'連体詞のあとは名詞だけ', left:{label:'連体詞', pos:'連体詞'}, right:{label:'動詞・形容詞・形容動詞'}, note:'名詞（体言）以外は修飾できない' },
+  { head:'副詞のあとは用言だけ', left:{label:'副詞', pos:'副詞'}, right:{label:'名詞', pos:'名詞'}, note:'名詞は直接修飾できない' },
+  { head:'感動詞・接続詞はひとりぼっち', left:{label:'感動詞・接続詞', pos:'感動詞'}, right:{label:'修飾する／される'}, note:'前後の語とくっつく関係を持たない' },
+  { head:'助動詞のまえは用言が基本', left:{label:'名詞', pos:'名詞'}, right:{label:'助動詞', pos:'助動詞'}, note:'例外は「だ・です」だけ（例：学生だ）', exception:true },
+];
+
+var PUZZLES = [
+  { chunks:[{text:'あの',pos:'連体詞'},{text:'犬',pos:'名詞'}],
+    hint:'連体詞は名詞だけを修飾する。「あの」の後には必ず名詞が来るよ！' },
+  { chunks:[{text:'とても',pos:'副詞'},{text:'大きい',pos:'形容詞'}],
+    hint:'副詞は用言（動詞・形容詞・形容動詞）を修飾する。ここでは形容詞「大きい」を修飾しているよ！' },
+  { chunks:[{text:'しかし',pos:'接続詞'},{text:'静かだ',pos:'形容動詞'}],
+    hint:'接続詞は前の文とあとの文をつなぐだけ。修飾関係はなく、独立して使われるよ！' },
+  { chunks:[{text:'犬',pos:'名詞'},{text:'は',pos:'助詞'}],
+    hint:'助詞は付属語だから単独では使えない。名詞「犬」にくっついて主語だと示しているよ！' },
+  { chunks:[{text:'歩か',pos:'動詞'},{text:'ない',pos:'助動詞'}],
+    hint:'助動詞は用言（ここでは動詞）の後ろにくっついて意味を添えるよ！' },
+  { chunks:[{text:'あの',pos:'連体詞'},{text:'犬',pos:'名詞'},{text:'は',pos:'助詞'},{text:'歩か',pos:'動詞'},{text:'ない',pos:'助動詞'}],
+    hint:'連体詞は名詞を修飾し、助詞は名詞にくっつき、助動詞は動詞にくっつく。ペアの法則が全部つながっているよ！' },
+  { chunks:[{text:'とても',pos:'副詞'},{text:'大きい',pos:'形容詞'},{text:'犬',pos:'名詞'}],
+    hint:'副詞は形容詞を修飾し、その形容詞が名詞を修飾する。副詞が名詞を直接修飾することはないよ！' },
+  { chunks:[{text:'しかし',pos:'接続詞'},{text:'全然',pos:'副詞'},{text:'歩か',pos:'動詞'},{text:'ない',pos:'助動詞'}],
+    hint:'接続詞は独立、副詞は動詞を修飾、助動詞は動詞にくっつく。それぞれ役割が違うよ！' },
+];
+
+var puzzleState = [];
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function initPuzzleState() {
+  puzzleState = PUZZLES.map(function(p) {
+    var poolOrder = shuffle(p.chunks.map(function(c, i) { return i; }));
+    return { filled: [], pool: poolOrder, solved: false };
+  });
+}
+
+function renderPuzzleCard(puzzle, idx) {
+  var st = puzzleState[idx];
+  var html = '<div class="puzzle-card' + (st.solved ? ' puzzle-solved' : '') + '" id="puzzle-' + idx + '">'
+    + '<div class="puzzle-num">パズル ' + (idx+1) + ' ／ ' + puzzle.chunks.length + 'ピース</div>'
+    + '<div class="puzzle-slots" id="puzzle-slots-' + idx + '">';
+  for (var i = 0; i < puzzle.chunks.length; i++) {
+    if (i < st.filled.length) {
+      var c = puzzle.chunks[st.filled[i]];
+      html += '<div class="puzzle-slot filled" style="background:' + POS_COLORS[c.pos] + '">' + c.text + '</div>';
+    } else {
+      html += '<div class="puzzle-slot"></div>';
+    }
+  }
+  html += '</div>';
+  html += '<div class="puzzle-pool" id="puzzle-pool-' + idx + '">';
+  st.pool.forEach(function(chunkIdx) {
+    var c = puzzle.chunks[chunkIdx];
+    html += '<button class="puzzle-chunk-btn" style="background:' + POS_COLORS[c.pos] + '" data-puzzle="' + idx + '" data-chunk="' + chunkIdx + '">' + c.text + '</button>';
+  });
+  html += '</div>';
+  html += '<div class="puzzle-result" id="puzzle-result-' + idx + '"></div>';
+  if (puzzle.hint) {
+    html += '<button class="hint-btn" id="hint-btn-' + idx + '" data-puzzle="' + idx + '">💡 コツを見る</button>'
+      + '<div class="hint-box" id="hint-box-' + idx + '">' + puzzle.hint + '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function impChip(item) {
+  if (item.pos) return '<span class="imp-chip" style="background:' + POS_COLORS[item.pos] + '">' + item.label + '</span>';
+  return '<span class="imp-chip imp-chip-plain">' + item.label + '</span>';
+}
+
+function renderImpossibleRules() {
+  var html = '<div class="imp-wrap">'
+    + '<div class="imp-wrap-title">⚠️ 絶対にありえない組み合わせ</div>';
+  IMPOSSIBLE_RULES.forEach(function(r, i) {
+    html += '<div class="imp-card">'
+      + '<div class="imp-head">' + (i+1) + '. ' + r.head + '</div>'
+      + '<div class="imp-visual">'
+      + impChip(r.left)
+      + '<span class="imp-x">✕</span>'
+      + impChip(r.right)
+      + '</div>'
+      + '<div class="imp-note">' + r.note + '</div>'
+      + (r.exception ? '<div class="imp-exception">◯ 例外あり</div>' : '')
+      + '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderPuzzleSection() {
+  var html = '<div class="puzzle-intro">🧩 タップした順番で下の四角にはめ込んで、文を組み立てよう。セットになりやすい品詞の組み合わせを体で覚えるパズルだよ。わからないときは各パズルの「💡 コツを見る」を押そう。</div>';
+  html += renderImpossibleRules();
+  PUZZLES.forEach(function(p, i) {
+    html += renderPuzzleCard(p, i);
+  });
+  return html;
+}
+
+function refreshPuzzle(idx) {
+  var puzzle = PUZZLES[idx];
+  var card = document.getElementById('puzzle-' + idx);
+  if (!card) return;
+  var tmp = document.createElement('div');
+  tmp.innerHTML = renderPuzzleCard(puzzle, idx);
+  card.replaceWith(tmp.firstChild);
+  wirePuzzle(idx);
+}
+
+function wirePuzzle(idx) {
+  document.querySelectorAll('.puzzle-chunk-btn[data-puzzle="' + idx + '"]').forEach(function(btn) {
+    btn.addEventListener('click', function() { handlePuzzleTap(idx, parseInt(btn.dataset.chunk)); });
+  });
+  var hintBtn = document.getElementById('hint-btn-' + idx);
+  var hintBox = document.getElementById('hint-box-' + idx);
+  if (hintBtn && hintBox) {
+    hintBtn.addEventListener('click', function() {
+      var showing = hintBox.style.display === 'block';
+      hintBox.style.display = showing ? 'none' : 'block';
+    });
+  }
+}
+
+function handlePuzzleTap(idx, chunkIdx) {
+  var st = puzzleState[idx];
+  if (st.solved) return;
+  st.pool = st.pool.filter(function(c) { return c !== chunkIdx; });
+  st.filled.push(chunkIdx);
+  var puzzle = PUZZLES[idx];
+
+  if (st.filled.length === puzzle.chunks.length) {
+    var correct = st.filled.every(function(c, i) { return c === i; });
+    if (correct) {
+      st.solved = true;
+      refreshPuzzle(idx);
+      var formula = puzzle.chunks.map(function(c) { return c.pos; }).join(' ＋ ');
+      var res = document.getElementById('puzzle-result-' + idx);
+      if (res) { res.className = 'puzzle-result puzzle-correct'; res.textContent = '🎉 正解！ ' + formula + ' の組み合わせ！'; }
+    } else {
+      refreshPuzzle(idx);
+      var card = document.getElementById('puzzle-' + idx);
+      if (card) { card.classList.add('puzzle-shake'); setTimeout(function(){ card.classList.remove('puzzle-shake'); }, 400); }
+      var res2 = document.getElementById('puzzle-result-' + idx);
+      if (res2) { res2.className = 'puzzle-result puzzle-wrong'; res2.textContent = '✗ 順番が違うかも。もう一度！'; }
+      setTimeout(function() {
+        st.pool = shuffle(puzzle.chunks.map(function(c, i) { return i; }));
+        st.filled = [];
+        refreshPuzzle(idx);
+      }, 1200);
+    }
+  } else {
+    refreshPuzzle(idx);
+  }
+}
 
 var POS_FLOW_SVG = '<svg viewBox="0 0 340 300" style="width:100%;max-width:380px;display:block;margin:0 auto">'
   + '<rect x="10" y="10" width="320" height="46" rx="8" fill="rgba(163,113,247,0.12)" stroke="#a371f7" stroke-width="2"/>'
@@ -148,15 +366,15 @@ var POS_FLOW_SVG = '<svg viewBox="0 0 340 300" style="width:100%;max-width:380px
 
 function renderSentenceBoard() {
   var html = '<div class="sentence-flow">';
-  SENTENCE.forEach(function(w) {
+  SENTENCE.forEach(function(w, i) {
     var color = POS_COLORS[w.pos];
-    html += '<div class="word-chip">'
+    html += '<div class="word-chip word-chip-clickable" data-jump="' + posId(w.pos) + '" title="「' + w.pos + '」の行にジャンプ">'
       + '<div class="w-text" style="background:' + color + '">' + w.text + '</div>'
       + '<div class="w-pos" style="background:' + color + '">' + w.pos + '</div>'
       + '</div>';
   });
   html += '</div>'
-    + '<div class="sentence-note">この1つの文の中に、10品詞ぜんぶが登場している。同じ文で見比べると違いがつかみやすい！</div>';
+    + '<div class="sentence-note">この1つの文の中に、10品詞ぜんぶが登場している。色つきの単語をタップすると②の表にジャンプするよ！</div>';
   return html;
 }
 
@@ -164,9 +382,10 @@ function renderPosTable() {
   var rows = '';
   POS_ROWS.forEach(function(r) {
     var color = POS_COLORS[r.pos];
-    rows += '<tr' + (r.groupEnd ? ' class="group-divider"' : '') + '>'
+    var moreHtml = (r.more && r.more.length) ? '<div class="pos-more">ほかに：' + r.more.join('・') + '</div>' : '';
+    rows += '<tr id="' + posId(r.pos) + '"' + (r.groupEnd ? ' class="group-divider"' : '') + '>'
       + '<td><div class="pos-name-cell"><span class="pos-dot" style="background:' + color + '"></span>' + r.pos + '</div></td>'
-      + '<td class="pos-word-highlight">' + r.word + '</td>'
+      + '<td class="pos-word-highlight">' + r.word + moreHtml + '</td>'
       + '<td><span class="pos-tag" style="background:' + (r.kind === '自立語' ? '#3fb950' : '#e94560') + '">' + r.kind + '</span></td>'
       + '<td>' + r.katsuyo + '</td>'
       + '<td>' + r.tip + '</td>'
@@ -178,7 +397,17 @@ function renderPosTable() {
     + '</table></div>';
 }
 
+function jumpToPosRow(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior:'smooth', block:'center' });
+  el.classList.add('row-flash');
+  setTimeout(function() { el.classList.remove('row-flash'); }, 1600);
+}
+
 function render() {
+  initPuzzleState();
+
   var html = '';
   html += '<div class="ref-intro">📖 品詞は毎回バラバラの例文で覚えると混乱しやすい。ここでは<strong style="color:var(--gold)">たった1つの例文</strong>を使い回して、10品詞の違いを一度に見比べられるようにしてある。迷ったらこのページに戻ってきて確認しよう。</div>';
 
@@ -191,11 +420,20 @@ function render() {
   html += '<div class="ref-section-title">③ 見分け方フローチャート（おさらい）</div>';
   html += '<div class="flow-recap">' + POS_FLOW_SVG + '</div>';
 
+  html += '<div class="ref-section-title">④ 品詞パズル（タップして組み立てよう）</div>';
+  html += renderPuzzleSection();
+
   html += '<div class="ref-actions">'
     + '<button class="print-btn" id="printBtn">🖨️ 印刷してデスクに貼る</button>'
     + '</div>';
 
   document.getElementById('refMain').innerHTML = html;
+
+  document.querySelectorAll('.word-chip-clickable[data-jump]').forEach(function(chip) {
+    chip.addEventListener('click', function() { jumpToPosRow(chip.dataset.jump); });
+  });
+
+  PUZZLES.forEach(function(p, i) { wirePuzzle(i); });
 
   var pb = document.getElementById('printBtn');
   if (pb) pb.addEventListener('click', function() { window.print(); });
