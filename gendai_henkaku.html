@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>国語｜変格活用まとめ（古文）</title>
+<title>国語｜変格活用まとめ（現代文）</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -64,7 +64,6 @@ body {
 .q-card.wrong-card   { border-color: var(--red); }
 .q-number { font-size: 11px; color: var(--text2); margin-bottom: 6px; letter-spacing: 1px; }
 .q-text   { font-size: 17px; line-height: 2.0; margin-bottom: 6px; letter-spacing: 0.04em; }
-.q-sub    { font-size: 13px; color: var(--text2); margin-bottom: 12px; line-height: 1.8; }
 .choices  { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
 .choice-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 10px 22px; border-radius: 8px; cursor: pointer; font-size: 15px; font-family: inherit; transition: all 0.2s; }
 .choice-btn:hover            { border-color: var(--purple); color: var(--purple); }
@@ -77,15 +76,13 @@ body {
 .q-feedback.correct-fb { background: rgba(63,185,80,0.08); border-left: 3px solid var(--green); color: var(--green); }
 .q-feedback.wrong-fb   { background: rgba(233,69,96,0.08); border-left: 3px solid var(--red); color: #f87171; }
 
-.print-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--purple), #7c3aed); color: #fff; border: none; padding: 12px 22px; border-radius: 10px; font-size: 14px; font-family: inherit; font-weight: bold; cursor: pointer; letter-spacing: 0.5px; }
-.print-btn:hover { opacity: 0.88; }
 .ref-actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 28px 0; align-items: center; }
 .back-link { display: inline-block; margin-top: 10px; font-size: 13px; color: var(--text2); text-decoration: none; border-bottom: 1px dashed var(--text2); }
 .back-link:hover { color: var(--purple); border-color: var(--purple); }
 
 @media print {
   body { background: #fff !important; color: #111 !important; }
-  .top-nav, .print-btn, .ref-actions, .back-link { display: none !important; }
+  .top-nav, .ref-actions { display: none !important; }
   .ref-intro { background: #f3f3f3 !important; color: #333 !important; border-color: #ccc !important; }
   .kobu-table-wrap, .kobu-table, .rule-box, .q-card { background: #fff !important; border-color: #999 !important; }
   .kobu-table th { background: #eee !important; color: #333 !important; }
@@ -97,88 +94,75 @@ body {
 <body>
 
 <nav class="top-nav">
-  <div class="nav-title">🐾 変格活用まとめ（古文）</div>
+  <div class="nav-title">🐾 変格活用まとめ（現代文）</div>
 </nav>
 
 <div class="ref-main" id="refMain"></div>
 
 <script>
-// ----- ① 変格活用ひとめ表 -----
-var HENKAKU_TABLE = [
-  { type:'カ変', word:'来（く）', mizen:'こ', renyou:'き', shushi:'く', rentai:'くる', izen:'くれ', meirei:'こ（よ）' },
-  { type:'サ変', word:'す・おはす など', mizen:'せ', renyou:'し', shushi:'す', rentai:'する', izen:'すれ', meirei:'せよ' },
-  { type:'ナ変', word:'死ぬ・往ぬ（去ぬ）', mizen:'な', renyou:'に', shushi:'ぬ', rentai:'ぬる', izen:'ぬれ', meirei:'ね' },
-  { type:'ラ変', word:'あり・をり・はべり・いまそかり', mizen:'ら', renyou:'り', shushi:'り', rentai:'る', izen:'れ', meirei:'れ' },
+var GENDAI_TABLE = [
+  { type:'カ変', word:'来る', mizen:'こ', renyou:'き', shushi:'くる', rentai:'くる', katei:'くれ', meirei:'こい' },
+  { type:'サ変', word:'する（〜する も含む）', mizen:'し・せ・さ', renyou:'し', shushi:'する', rentai:'する', katei:'すれ', meirei:'しろ・せよ' },
 ];
 
-var HENKAKU_DOG = [
-  { type:'カ変（来）', color:'#a371f7', rows:[
-    { form:'未然形＋ず', cls:'犬、来ず。', j:'犬が来ない。' },
-    { form:'連用形＋たり', cls:'犬、来たり。', j:'犬が来た。' },
-    { form:'終止形（言い切り）', cls:'犬、来。', j:'犬が来る。' },
+var GENDAI_DOG = [
+  { type:'カ変（来る）', color:'#a371f7', rows:[
+    { form:'未然形＋ない', cls:'犬、来ない。', j:'犬が来ない。' },
+    { form:'連用形＋ます', cls:'犬、来ます。', j:'犬が来ます。' },
+    { form:'終止形（言い切り）', cls:'犬、来る。', j:'犬が来る。' },
     { form:'連体形＋時', cls:'犬、来る時。', j:'犬が来る時。' },
-    { form:'已然形＋ば', cls:'犬、来れば。', j:'犬が来ると。' },
-    { form:'命令形', cls:'疾く来。', j:'早く来い。' },
+    { form:'仮定形＋ば', cls:'犬、来れば。', j:'犬が来ると。' },
+    { form:'命令形', cls:'犬、来い。', j:'犬、来い。（犬に呼びかける命令）' },
   ]},
-  { type:'サ変（す）', color:'#f5c518', rows:[
-    { form:'未然形＋ず', cls:'犬、鳴くまねせず。', j:'犬が鳴くまねをしない。' },
-    { form:'連用形＋たり', cls:'犬、鳴くまねしたり。', j:'犬が鳴くまねをした。' },
-    { form:'終止形（言い切り）', cls:'犬、鳴くまねす。', j:'犬が鳴くまねをする。' },
-    { form:'連体形＋時', cls:'犬、鳴くまねする時。', j:'犬が鳴くまねをする時。' },
-    { form:'已然形＋ば', cls:'犬、鳴くまねすれば。', j:'犬が鳴くまねをすると。' },
-    { form:'命令形', cls:'疾く鳴くまねせよ。', j:'早く鳴くまねをしろ。' },
-  ]},
-  { type:'ナ変（往ぬ）', color:'#3fb950', rows:[
-    { form:'未然形＋ず', cls:'犬、往なず。', j:'犬が行ってしまわない。' },
-    { form:'連用形＋たり', cls:'犬、往にたり。', j:'犬は行ってしまった。' },
-    { form:'終止形（言い切り）', cls:'犬、往ぬ。', j:'犬は行ってしまう。' },
-    { form:'連体形＋時', cls:'犬、往ぬる時。', j:'犬が行ってしまう時。' },
-    { form:'已然形＋ば', cls:'犬、往ぬれば。', j:'犬が行ってしまうと。' },
-    { form:'命令形', cls:'疾く往ね。', j:'早く行ってしまえ。' },
-  ]},
-  { type:'ラ変（あり）', color:'#0ea5e9', rows:[
-    { form:'未然形＋ば（仮定）', cls:'犬あらば。', j:'もし犬がいたら。' },
-    { form:'連用形＋けり', cls:'犬ありけり。', j:'犬がいたのだった。' },
-    { form:'終止形（言い切り）', cls:'犬、あり。', j:'犬がいる。' },
-    { form:'連体形＋時', cls:'犬ある時。', j:'犬がいる時。' },
-    { form:'已然形＋ば', cls:'犬あれば。', j:'犬がいるので。' },
-    { form:'命令形', cls:'ここにあれ。', j:'ここにいろ。' },
+  { type:'サ変（する）', color:'#f5c518', rows:[
+    { form:'未然形＋ない', cls:'犬、鳴くまねをしない。', j:'犬が鳴くまねをしない。' },
+    { form:'連用形＋ます', cls:'犬、鳴くまねをします。', j:'犬が鳴くまねをします。' },
+    { form:'終止形（言い切り）', cls:'犬、鳴くまねをする。', j:'犬が鳴くまねをする。' },
+    { form:'連体形＋時', cls:'犬、鳴くまねをする時。', j:'犬が鳴くまねをする時。' },
+    { form:'仮定形＋ば', cls:'犬、鳴くまねをすれば。', j:'犬が鳴くまねをすると。' },
+    { form:'命令形', cls:'犬、鳴くまねをしろ。', j:'犬、鳴くまねをしろ。' },
   ]},
 ];
 
-var HENKAKU_QUIZ = [
-  { q:'「来（く）」の活用の種類は？', choices:['サ変','カ変','ナ変'], answer:1, exp:'変格活用の中で「来」だけがカ変。それ以外の言葉はカ変にならない。' },
-  { q:'「死ぬ」の活用の種類は？', choices:['ナ変','ラ変','サ変'], answer:0, exp:'ナ変は「死ぬ」「往ぬ（去ぬ）」の2語だけ。' },
-  { q:'「あり」の已然形は？', choices:['あら','あり','あれ'], answer:2, exp:'ラ変（あり・をり・はべり・いまそかり）は「ら・り・り・る・れ・れ」の形。已然形は「あれ」。' },
-  { q:'「す」の連体形は？', choices:['する','す','すれ'], answer:0, exp:'サ変は「せ・し・す・する・すれ・せよ」の形。連体形は「する」。' },
-  { q:'次のうちラ変にあてはまる語はどれ？', choices:['来','をり','死ぬ'], answer:1, exp:'「をり」はラ変（あり・をり・はべり・いまそかり）の仲間。' },
-  { q:'「往ぬ」の命令形は？', choices:['往に','往ぬ','往ね'], answer:2, exp:'ナ変は「な・に・ぬ・ぬる・ぬれ・ね」の形。命令形は「ね」。' },
+var GENDAI_QUIZ = [
+  { q:'「来る」の活用の種類は？', choices:['サ変','カ変','五段'], answer:1, exp:'現代文の変格活用は「来る」（カ変）と「する」（サ変）の2語だけ。' },
+  { q:'「する」の活用の種類は？', choices:['サ変','カ変','上一段'], answer:0, exp:'「する」「勉強する」「心配する」のように、〜する型の複合動詞もすべてサ変。' },
+  { q:'「来る」の命令形は？', choices:['来い','来ろ','来よ'], answer:0, exp:'現代文（口語）では「来い」。「来よ」は古文（文語）の命令形。' },
+  { q:'「する」の命令形は？', choices:['すれ','し','しろ'], answer:2, exp:'「しろ」または「せよ」。仮定形は「すれ」、連用形は「し」なので混同に注意。' },
+  { q:'「勉強する」の「する」部分の活用の種類は？', choices:['カ変','サ変','五段'], answer:1, exp:'「〜する」の形の複合動詞は、みんな「する」と同じサ変になる。' },
+  { q:'サ変の未然形「させる」に使われている形はどれ？', choices:['し','せ','さ'], answer:2, exp:'サ変の未然形は「し（＋ない）」「せ（＋ぬ）」「さ（＋せる）」の3つがある。「させる」は「さ」＋「せる」。' },
 ];
 
-function renderHenkakuTable() {
-  var rows = HENKAKU_TABLE.map(function(r) {
+function renderGendaiTable() {
+  var rows = GENDAI_TABLE.map(function(r) {
     return '<tr>'
       + '<td class="kobu-word">' + r.type + '</td>'
       + '<td>' + r.word + '</td>'
       + '<td>' + r.mizen + '</td><td>' + r.renyou + '</td><td>' + r.shushi + '</td>'
-      + '<td>' + r.rentai + '</td><td>' + r.izen + '</td><td>' + r.meirei + '</td>'
+      + '<td>' + r.rentai + '</td><td>' + r.katei + '</td><td>' + r.meirei + '</td>'
       + '</tr>';
   }).join('');
   return '<div class="kobu-table-wrap"><table class="kobu-table">'
-    + '<thead><tr><th>種類</th><th>あてはまる語</th><th>未然</th><th>連用</th><th>終止</th><th>連体</th><th>已然</th><th>命令</th></tr></thead>'
+    + '<thead><tr><th>種類</th><th>あてはまる語</th><th>未然</th><th>連用</th><th>終止</th><th>連体</th><th>仮定</th><th>命令</th></tr></thead>'
     + '<tbody>' + rows + '</tbody></table></div>';
 }
 
-function renderHenkakuMnemonic() {
+function renderGendaiMnemonic() {
   return '<div class="rule-box">'
-    + '<div class="rule-title">変格活用は、全部で9語（＋複合語）しかない</div>'
-    + '<div>来（カ変・1語）／す・おはす（サ変）／死ぬ・往ぬ（ナ変・2語）／あり・をり・はべり・いまそかり（ラ変・4語）</div>'
-    + '<div class="note">この9語だけを丸ごと覚えてしまえば、あとの動詞はすべて四段・上一段・下一段・上二段・下二段のどれかに必ず当てはまる。「見たことがない特別な形」が出てきたら、まずこの9語を疑おう。</div>'
+    + '<div class="rule-title">現代文の変格活用は、たった2語だけ</div>'
+    + '<div>来る（カ変）／する（サ変・「〜する」の複合動詞もすべて含む）</div>'
+    + '<div class="note">この2語以外の動詞は、五段・上一段・下一段のどれかに必ず当てはまる。「来る」「する」は日常でよく使う超基本の動詞だからこそ、特別な活用が生き残っている。</div>'
+    + '</div>'
+    + '<div class="rule-box">'
+    + '<div class="rule-title">サ変の未然形だけ、3つの形がある</div>'
+    + '<div>し（＋ない）：しない　／　せ（＋ぬ）：せぬ　／　さ（＋せる）：させる</div>'
+    + '<div class="ex">🐕 犬に鳴くまねをさせる。（「さ」＋「せる」の形）</div>'
+    + '<div class="note">あとに続く言葉によって「し・せ・さ」を使い分ける。これはサ変だけの特別なルール。</div>'
     + '</div>';
 }
 
-function renderHenkakuDog() {
-  return HENKAKU_DOG.map(function(g) {
+function renderGendaiDog() {
+  return GENDAI_DOG.map(function(g) {
     var rows = g.rows.map(function(r) {
       return '<tr><td style="font-size:12px;color:#8b949e;white-space:nowrap;">' + r.form + '</td><td class="kobu-word">' + r.cls + '</td><td style="color:#8b949e;font-size:13px;">' + r.j + '</td></tr>';
     }).join('');
@@ -187,30 +171,30 @@ function renderHenkakuDog() {
   }).join('');
 }
 
-function renderHenkakuQuiz() {
-  var cards = HENKAKU_QUIZ.map(function(item, i) {
+function renderGendaiQuiz() {
+  var cards = GENDAI_QUIZ.map(function(item, i) {
     var choices = item.choices.map(function(c, ci) {
       return '<button class="choice-btn" data-qi="' + i + '" data-ci="' + ci + '">' + c + '</button>';
     }).join('');
-    return '<div class="q-card" id="hq-card-' + i + '">'
+    return '<div class="q-card" id="gk-card-' + i + '">'
       + '<div class="q-number">Q' + (i + 1) + '</div>'
       + '<div class="q-text">' + item.q + '</div>'
-      + '<div class="choices" id="hq-choices-' + i + '">' + choices + '</div>'
-      + '<div class="q-feedback" id="hq-fb-' + i + '"></div>'
+      + '<div class="choices" id="gk-choices-' + i + '">' + choices + '</div>'
+      + '<div class="q-feedback" id="gk-fb-' + i + '"></div>'
       + '</div>';
   }).join('');
   return '<div class="acc-lead">🎯 答えを選ぶとすぐに正解と解説が出るよ。点数はつかないので、気軽に確認しよう。</div>' + cards;
 }
 
-function wireHenkakuQuiz() {
+function wireGendaiQuiz() {
   document.querySelectorAll('.choice-btn[data-qi]').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var qi = parseInt(btn.dataset.qi);
       var ci = parseInt(btn.dataset.ci);
-      var item = HENKAKU_QUIZ[qi];
-      var choicesWrap = document.getElementById('hq-choices-' + qi);
-      var fb = document.getElementById('hq-fb-' + qi);
-      var card = document.getElementById('hq-card-' + qi);
+      var item = GENDAI_QUIZ[qi];
+      var choicesWrap = document.getElementById('gk-choices-' + qi);
+      var fb = document.getElementById('gk-fb-' + qi);
+      var card = document.getElementById('gk-card-' + qi);
       if (choicesWrap.dataset.answered) return;
       choicesWrap.dataset.answered = '1';
       choicesWrap.querySelectorAll('.choice-btn').forEach(function(b, i) {
@@ -228,32 +212,24 @@ function wireHenkakuQuiz() {
 }
 
 function render() {
-  var html = '<div class="ref-intro">🐾 これは<strong style="color:var(--gold)">古文（文語）</strong>の変格活用まとめ。古文の動詞の中で、決まったパターンに当てはまらない「変格活用」だけを1ページにまとめた。数はたった9語だけなので、丸ごと覚えてしまうのが一番の近道。現代文（口語）の変格活用は<a href="gendai_henkaku.html" style="color:var(--teal)">こちら</a>。</div>';
+  var html = '<div class="ref-intro">🐾 これは<strong style="color:var(--gold)">現代文（口語）</strong>の変格活用まとめ。今の日本語で使われる変格活用は「来る」「する」のたった2語だけ。古文（文語）の変格活用は<a href="henkaku_katsuyo.html" style="color:var(--teal)">こちら</a>。</div>';
 
   html += '<div class="ref-section-title">① 変格活用ひとめ表</div>';
-  html += renderHenkakuTable();
+  html += renderGendaiTable();
 
   html += '<div class="ref-section-title">② 覚え方のコツ</div>';
-  html += renderHenkakuMnemonic();
+  html += renderGendaiMnemonic();
 
   html += '<div class="ref-section-title">③ 犬の例文で活用を見比べる</div>';
   html += '<div class="acc-lead">品詞早見表・古文まとめで使っている「あの犬」を使って、それぞれの活用形がどう変わるか見比べてみよう。</div>';
-  html += renderHenkakuDog();
+  html += renderGendaiDog();
 
   html += '<div class="ref-section-title">④ かんたん問題</div>';
-  html += renderHenkakuQuiz();
-
-  html += '<div class="ref-actions">'
-    + '<button class="print-btn" id="printBtn">🖨️ 印刷してデスクに貼る</button>'
-    + '<a class="back-link" href="kobun_matome.html">← 古文まとめにもどる</a>'
-    + '</div>';
+  html += renderGendaiQuiz();
 
   document.getElementById('refMain').innerHTML = html;
 
-  wireHenkakuQuiz();
-
-  var pb = document.getElementById('printBtn');
-  if (pb) pb.addEventListener('click', function() { window.print(); });
+  wireGendaiQuiz();
 }
 
 render();
