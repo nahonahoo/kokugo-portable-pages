@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>国語｜変格活用まとめ（現代文）</title>
+<title>国語｜活用形まとめ（現代文）</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -52,6 +52,8 @@ body {
 .rule-box .ex   { color: var(--gold); font-size: 15px; margin-bottom: 4px; }
 .rule-box .note { font-size: 12px; color: var(--text2); padding: 6px 10px; background: rgba(163,113,247,0.08); border-radius: 6px; margin-top: 6px; }
 
+.flow-recap { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 22px; text-align: center; margin-top: 8px; }
+
 .kobu-table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 10px; }
 .kobu-table { width: 100%; border-collapse: collapse; min-width: 420px; background: var(--bg3); font-size: 14px; }
 .kobu-table th { background: #11151c; color: var(--text2); font-size: 11px; padding: 8px 12px; text-align: left; border-bottom: 2px solid var(--border); white-space: nowrap; }
@@ -77,14 +79,12 @@ body {
 .q-feedback.wrong-fb   { background: rgba(233,69,96,0.08); border-left: 3px solid var(--red); color: #f87171; }
 
 .ref-actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 28px 0; align-items: center; }
-.back-link { display: inline-block; margin-top: 10px; font-size: 13px; color: var(--text2); text-decoration: none; border-bottom: 1px dashed var(--text2); }
-.back-link:hover { color: var(--purple); border-color: var(--purple); }
 
 @media print {
   body { background: #fff !important; color: #111 !important; }
   .top-nav, .ref-actions { display: none !important; }
   .ref-intro { background: #f3f3f3 !important; color: #333 !important; border-color: #ccc !important; }
-  .kobu-table-wrap, .kobu-table, .rule-box, .q-card { background: #fff !important; border-color: #999 !important; }
+  .kobu-table-wrap, .kobu-table, .rule-box, .q-card, .flow-recap { background: #fff !important; border-color: #999 !important; }
   .kobu-table th { background: #eee !important; color: #333 !important; }
   .kobu-table td { color: #111 !important; }
   .kobu-word, .ref-section-title { color: #111 !important; }
@@ -94,25 +94,80 @@ body {
 <body>
 
 <nav class="top-nav">
-  <div class="nav-title">🐾 変格活用まとめ（現代文）</div>
+  <div class="nav-title">🐾 活用形まとめ（現代文）</div>
 </nav>
 
 <div class="ref-main" id="refMain"></div>
 
 <script>
+var GENDAI_FORMS = [
+  { name:'未然形', desc:'まだそうなっていない状態を表す形。あとに「ない」「う・よう」などが続く。', ex:'歩か（ない）・歩こ（う）' },
+  { name:'連用形', desc:'用言（動詞など）や「た」「ます」に連なる形。', ex:'歩き（ます）・歩い（た）' },
+  { name:'終止形', desc:'文をそのまま言い切る形。', ex:'犬が歩く。' },
+  { name:'連体形', desc:'体言（名詞）に連なる形。あとに名詞が続く。', ex:'歩く（時）' },
+  { name:'仮定形', desc:'「もし〜なら」の仮定を表す形。あとに「ば」が続く。', ex:'歩け（ば）' },
+  { name:'命令形', desc:'そのまま言い切って命令の意味になる形。', ex:'歩け。' },
+];
+
 var GENDAI_TABLE = [
+  { type:'五段活用', word:'歩く', mizen:'歩か', renyou:'歩き', shushi:'歩く', rentai:'歩く', katei:'歩け', meirei:'歩け' },
+  { type:'上一段活用', word:'起きる', mizen:'起き', renyou:'起き', shushi:'起きる', rentai:'起きる', katei:'起きれ', meirei:'起きろ（起きよ）' },
+  { type:'下一段活用', word:'食べる', mizen:'食べ', renyou:'食べ', shushi:'食べる', rentai:'食べる', katei:'食べれ', meirei:'食べろ（食べよ）' },
   { type:'カ変', word:'来る', mizen:'こ', renyou:'き', shushi:'くる', rentai:'くる', katei:'くれ', meirei:'こい' },
   { type:'サ変', word:'する（〜する も含む）', mizen:'し・せ・さ', renyou:'し', shushi:'する', rentai:'する', katei:'すれ', meirei:'しろ・せよ' },
 ];
 
+var GENDAI_MIWAKE_SVG = '<svg viewBox="0 0 340 260" style="width:100%;max-width:380px;display:block;margin:0 auto">'
+  + '<rect x="10" y="10" width="320" height="46" rx="8" fill="rgba(163,113,247,0.12)" stroke="#a371f7" stroke-width="2"/>'
+  + '<text x="170" y="32" fill="#a371f7" font-size="12" text-anchor="middle">① 動詞に「ない」をつける</text>'
+  + '<text x="170" y="46" fill="#8b949e" font-size="9" text-anchor="middle">直前の音（段）を見る</text>'
+  + '<path d="M 170,56 L 170,72" stroke="#8b949e" stroke-width="2" marker-end="url(#gArrow)"/>'
+  + '<rect x="10" y="74" width="320" height="46" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0ea5e9" stroke-width="2"/>'
+  + '<text x="170" y="96" fill="#0ea5e9" font-size="12" text-anchor="middle">② ア段なら五段活用</text>'
+  + '<text x="170" y="110" fill="#8b949e" font-size="9" text-anchor="middle">例：歩か（ない）→ ア段</text>'
+  + '<path d="M 170,120 L 170,136" stroke="#8b949e" stroke-width="2" marker-end="url(#gArrow)"/>'
+  + '<rect x="10" y="138" width="320" height="46" rx="8" fill="rgba(245,197,24,0.12)" stroke="#f5c518" stroke-width="2"/>'
+  + '<text x="170" y="160" fill="#f5c518" font-size="12" text-anchor="middle">③ イ段なら上一段／エ段なら下一段</text>'
+  + '<text x="170" y="174" fill="#8b949e" font-size="9" text-anchor="middle">例：起き（ない）→ イ段／食べ（ない）→ エ段</text>'
+  + '<path d="M 170,184 L 170,200" stroke="#8b949e" stroke-width="2" marker-end="url(#gArrow)"/>'
+  + '<rect x="10" y="202" width="320" height="46" rx="8" fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="2"/>'
+  + '<text x="170" y="222" fill="#3fb950" font-size="12" text-anchor="middle">④ 「来る」「する」だけは例外</text>'
+  + '<text x="170" y="238" fill="#8b949e" font-size="9" text-anchor="middle">この2語はカ変・サ変と丸暗記する</text>'
+  + '<defs><marker id="gArrow" markerWidth="8" markerHeight="8" refX="4" refY="6" orient="auto"><path d="M0,0 L8,0 L4,7 Z" fill="#8b949e"/></marker></defs>'
+  + '</svg>';
+
 var GENDAI_DOG = [
+  { type:'五段活用（歩く）', color:'#3fb950', rows:[
+    { form:'未然形＋ない', cls:'犬、歩かない。', j:'犬が歩かない。' },
+    { form:'連用形＋ます', cls:'犬、歩きます。', j:'犬が歩きます。' },
+    { form:'終止形（言い切り）', cls:'犬、歩く。', j:'犬が歩く。' },
+    { form:'連体形＋時', cls:'犬、歩く時。', j:'犬が歩く時。' },
+    { form:'仮定形＋ば', cls:'犬、歩けば。', j:'犬が歩くと。' },
+    { form:'命令形', cls:'犬、歩け。', j:'犬、歩け。' },
+  ]},
+  { type:'上一段活用（起きる）', color:'#0ea5e9', rows:[
+    { form:'未然形＋ない', cls:'犬、起きない。', j:'犬が起きない。' },
+    { form:'連用形＋ます', cls:'犬、起きます。', j:'犬が起きます。' },
+    { form:'終止形（言い切り）', cls:'犬、起きる。', j:'犬が起きる。' },
+    { form:'連体形＋時', cls:'犬、起きる時。', j:'犬が起きる時。' },
+    { form:'仮定形＋ば', cls:'犬、起きれば。', j:'犬が起きると。' },
+    { form:'命令形', cls:'犬、起きろ。', j:'犬、起きろ。' },
+  ]},
+  { type:'下一段活用（食べる）', color:'#e94560', rows:[
+    { form:'未然形＋ない', cls:'犬、食べない。', j:'犬が食べない。' },
+    { form:'連用形＋ます', cls:'犬、食べます。', j:'犬が食べます。' },
+    { form:'終止形（言い切り）', cls:'犬、食べる。', j:'犬が食べる。' },
+    { form:'連体形＋時', cls:'犬、食べる時。', j:'犬が食べる時。' },
+    { form:'仮定形＋ば', cls:'犬、食べれば。', j:'犬が食べると。' },
+    { form:'命令形', cls:'犬、食べろ。', j:'犬、食べろ。' },
+  ]},
   { type:'カ変（来る）', color:'#a371f7', rows:[
     { form:'未然形＋ない', cls:'犬、来ない。', j:'犬が来ない。' },
     { form:'連用形＋ます', cls:'犬、来ます。', j:'犬が来ます。' },
     { form:'終止形（言い切り）', cls:'犬、来る。', j:'犬が来る。' },
     { form:'連体形＋時', cls:'犬、来る時。', j:'犬が来る時。' },
     { form:'仮定形＋ば', cls:'犬、来れば。', j:'犬が来ると。' },
-    { form:'命令形', cls:'犬、来い。', j:'犬、来い。（犬に呼びかける命令）' },
+    { form:'命令形', cls:'犬、来い。', j:'犬、来い。' },
   ]},
   { type:'サ変（する）', color:'#f5c518', rows:[
     { form:'未然形＋ない', cls:'犬、鳴くまねをしない。', j:'犬が鳴くまねをしない。' },
@@ -125,13 +180,24 @@ var GENDAI_DOG = [
 ];
 
 var GENDAI_QUIZ = [
-  { q:'「来る」の活用の種類は？', choices:['サ変','カ変','五段'], answer:1, exp:'現代文の変格活用は「来る」（カ変）と「する」（サ変）の2語だけ。' },
-  { q:'「する」の活用の種類は？', choices:['サ変','カ変','上一段'], answer:0, exp:'「する」「勉強する」「心配する」のように、〜する型の複合動詞もすべてサ変。' },
-  { q:'「来る」の命令形は？', choices:['来い','来ろ','来よ'], answer:0, exp:'現代文（口語）では「来い」。「来よ」は古文（文語）の命令形。' },
-  { q:'「する」の命令形は？', choices:['すれ','し','しろ'], answer:2, exp:'「しろ」または「せよ」。仮定形は「すれ」、連用形は「し」なので混同に注意。' },
-  { q:'「勉強する」の「する」部分の活用の種類は？', choices:['カ変','サ変','五段'], answer:1, exp:'「〜する」の形の複合動詞は、みんな「する」と同じサ変になる。' },
-  { q:'サ変の未然形「させる」に使われている形はどれ？', choices:['し','せ','さ'], answer:2, exp:'サ変の未然形は「し（＋ない）」「せ（＋ぬ）」「さ（＋せる）」の3つがある。「させる」は「さ」＋「せる」。' },
+  { q:'「歩く」に「ない」をつけると？', choices:['歩かない','歩きない','歩けない'], answer:0, exp:'「ない」をつけて直前の音を見る。「歩か」はア段なので五段活用。' },
+  { q:'「歩く」は何活用？', choices:['上一段活用','五段活用','下一段活用'], answer:1, exp:'未然形がア段（歩か-ない）＝五段活用。' },
+  { q:'「起きる」に「ない」をつけると？', choices:['起きない','起きるない','起こない'], answer:0, exp:'「起き」はイ段なので上一段活用。' },
+  { q:'「食べる」は何活用？', choices:['五段活用','上一段活用','下一段活用'], answer:2, exp:'食べ「ない」→エ段（べ）→下一段活用。' },
+  { q:'「来る」「する」の活用の種類は？', choices:['カ変とサ変','サ変とカ変（同じ）','五段と五段'], answer:0, exp:'この2語だけの特別な活用。丸暗記するしかない。' },
+  { q:'サ変の未然形「させる」に使われている形はどれ？', choices:['し','せ','さ'], answer:2, exp:'サ変の未然形は「し（＋ない）」「せ（＋ぬ）」「さ（＋せる）」の3つがある。' },
+  { q:'「犬が公園で走るとき、とても楽しそうだ。」の「走る」の活用形は？', choices:['終止形','連体形','連用形'], answer:1, exp:'あとに体言「とき」が続く→連体形。終止形と形が同じなので、あとに続く言葉で判断する。' },
+  { q:'「もし犬が走れば、すぐに疲れるだろう。」の「走れ」の活用形は？', choices:['已然形','仮定形','命令形'], answer:1, exp:'あとに「ば」が続き、「もし〜なら」の仮定を表す→仮定形。「已然形」は古文だけで使う言葉。' },
 ];
+
+function renderGendaiForms() {
+  var rows = GENDAI_FORMS.map(function(f) {
+    return '<tr><td class="kobu-word">' + f.name + '</td><td>' + f.desc + '</td><td style="color:#8b949e;font-size:13px;">' + f.ex + '</td></tr>';
+  }).join('');
+  return '<div class="kobu-table-wrap"><table class="kobu-table">'
+    + '<thead><tr><th>活用形</th><th>定義</th><th>例</th></tr></thead>'
+    + '<tbody>' + rows + '</tbody></table></div>';
+}
 
 function renderGendaiTable() {
   var rows = GENDAI_TABLE.map(function(r) {
@@ -143,17 +209,12 @@ function renderGendaiTable() {
       + '</tr>';
   }).join('');
   return '<div class="kobu-table-wrap"><table class="kobu-table">'
-    + '<thead><tr><th>種類</th><th>あてはまる語</th><th>未然</th><th>連用</th><th>終止</th><th>連体</th><th>仮定</th><th>命令</th></tr></thead>'
+    + '<thead><tr><th>種類</th><th>例の語</th><th>未然</th><th>連用</th><th>終止</th><th>連体</th><th>仮定</th><th>命令</th></tr></thead>'
     + '<tbody>' + rows + '</tbody></table></div>';
 }
 
 function renderGendaiMnemonic() {
   return '<div class="rule-box">'
-    + '<div class="rule-title">現代文の変格活用は、たった2語だけ</div>'
-    + '<div>来る（カ変）／する（サ変・「〜する」の複合動詞もすべて含む）</div>'
-    + '<div class="note">この2語以外の動詞は、五段・上一段・下一段のどれかに必ず当てはまる。「来る」「する」は日常でよく使う超基本の動詞だからこそ、特別な活用が生き残っている。</div>'
-    + '</div>'
-    + '<div class="rule-box">'
     + '<div class="rule-title">サ変の未然形だけ、3つの形がある</div>'
     + '<div>し（＋ない）：しない　／　せ（＋ぬ）：せぬ　／　さ（＋せる）：させる</div>'
     + '<div class="ex">🐕 犬に鳴くまねをさせる。（「さ」＋「せる」の形）</div>'
@@ -212,19 +273,22 @@ function wireGendaiQuiz() {
 }
 
 function render() {
-  var html = '<div class="ref-intro">🐾 これは<strong style="color:var(--gold)">現代文（口語）</strong>の変格活用まとめ。今の日本語で使われる変格活用は「来る」「する」のたった2語だけ。古文（文語）の変格活用は<a href="henkaku_katsuyo.html" style="color:var(--teal)">こちら</a>。</div>';
+  var html = '<div class="ref-intro">🐾 これは<strong style="color:var(--gold)">現代文（口語）</strong>の活用形まとめ。動詞の活用の種類は「五段・上一段・下一段・カ変・サ変」の5つ。古文（文語）の活用形は<a href="henkaku_katsuyo.html" style="color:var(--teal)">こちら</a>。</div>';
 
-  html += '<div class="ref-section-title">① 変格活用ひとめ表</div>';
+  html += '<div class="ref-section-title">① 活用形とは（6つの形）</div>';
+  html += renderGendaiForms();
+
+  html += '<div class="ref-section-title">② 活用の種類ひとめ表</div>';
   html += renderGendaiTable();
-
-  html += '<div class="ref-section-title">② 覚え方のコツ</div>';
   html += renderGendaiMnemonic();
 
-  html += '<div class="ref-section-title">③ 犬の例文で活用を見比べる</div>';
-  html += '<div class="acc-lead">品詞早見表・古文まとめで使っている「あの犬」を使って、それぞれの活用形がどう変わるか見比べてみよう。</div>';
+  html += '<div class="ref-section-title">③ 見分け方のコツ</div>';
+  html += '<div class="flow-recap">' + GENDAI_MIWAKE_SVG + '</div>';
+
+  html += '<div class="ref-section-title">④ 犬の例文で見比べる</div>';
   html += renderGendaiDog();
 
-  html += '<div class="ref-section-title">④ かんたん問題</div>';
+  html += '<div class="ref-section-title">⑤ 実践問題</div>';
   html += renderGendaiQuiz();
 
   document.getElementById('refMain').innerHTML = html;
